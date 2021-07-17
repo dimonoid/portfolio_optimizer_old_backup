@@ -4,16 +4,17 @@ import csv
 from datetime import date, timedelta
 import numpy as np
 from yahoofinancials import YahooFinancials
+from icecream import *
 
-#tickerList = 'Test2'
-tickerList = 'Wealthsimple'
+tickerList = 'INC-UN.TO'
+#tickerList = 'Wealthsimple'
 # tickerList = 'Wealthsimple'
 tickerListTime = tickerList + '_10Years'
 
 years = 10
 days = 365 * years
 
-# days = 10
+# days = 90
 
 repeatDebug = 10000
 
@@ -61,7 +62,7 @@ def main():
                 continue
             # TODO DEBUG
 
-            # stock_symbol = 'DF.TO'  # temp !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            #stock_symbol = 'DGRC.TO'  # temp !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             # if stock_symbol == 'CYBR-B.TO':
             #    print('Debug')
             # set date range for historical prices
@@ -93,21 +94,29 @@ def main():
             pricesTemp = json_prices[stock_symbol]['prices']
             pricesTempSorted = sorted(pricesTemp, key=lambda k: k['date'])  # should be from old to new
 
-            cumulativeDividends = 0
+            numberOfShares = 1.0
+            # try:
             for n, priceDict in enumerate(pricesTempSorted):
-                if len(dividends) == 0:
+                if len(dividends) == 0:  # speed optimization
                     break
-                # print(priceDict)
-                # print(priceDict['formatted_date'])
-                if priceDict['formatted_date'] in dividends:
-                    cumulativeDividends += dividends[priceDict['formatted_date']]
 
-                # print(json_prices[stock_symbol]['prices'][n]['close'], "+")
-                try:
-                    json_prices[stock_symbol]['prices'][n]['close'] += cumulativeDividends
-                except TypeError as e:
-                    print(e.args)
-                    print('Found NaN value, continuing...')
+                priceOfOneShare = json_prices[stock_symbol]['prices'][n]['close']
+                if np.equal(priceOfOneShare, None) or priceOfOneShare == 0:
+                    json_prices[stock_symbol]['prices'][n]['close'] = 0  # will be processed later
+                    continue
+
+                # if price is ok, but dividend is None, then assume dividend=0
+                if priceDict['formatted_date'] in dividends and \
+                        not np.equal(dividends[priceDict['formatted_date']], None):
+                    totalPrice = (priceOfOneShare + dividends[priceDict['formatted_date']]) * numberOfShares  # DRIP
+                    numberOfShares = totalPrice / priceOfOneShare
+                else:
+                    totalPrice = priceOfOneShare * numberOfShares
+
+                json_prices[stock_symbol]['prices'][n]['close'] = totalPrice
+
+                # ic(numberOfShares, totalPrice)
+
                 # print(cumulativeDividends, "=")
                 # print(json_prices[stock_symbol]['prices'][n]['close'])
                 # print('__________________')
@@ -115,7 +124,9 @@ def main():
             # transform json file to dataframe
             prices = pd.DataFrame(json_prices[stock_symbol]['prices']
                                   )[['formatted_date', 'close']]
-
+            # except Exception as e:
+            #    print(e)
+            #    exit(0)
             # print(prices)
             # print(prices['close'].isna().sum())
             print(len(prices))
@@ -137,13 +148,14 @@ def main():
                 # continue
 
             if stock_symbol in {'FQC.TO', 'HQU.TO', 'HSU.TO', 'HFU.TO', 'HGU.TO', 'HMJU.TO', 'HXD.TO', 'HND.TO',
-                                'FSF.TO', 'DXP.TO', 'DGRC.TO','HMJI.TO'}:
+                                'FSF.TO', 'DXP.TO', 'DGRC.TO', 'HMJI.TO'}:
                 # black list of errors, leveraged, or inverse etfs since it is cheating
                 continue
 
             prices.rename(columns={'close': stock_symbol}, inplace=True)  # rename in prparation to merging
 
             pricesBuffered.append(prices)
+            # exit(0)  # debug
         except Exception as e:
             print(d + " Error " + str(e.args))
             # print(str(e.args[0]))
