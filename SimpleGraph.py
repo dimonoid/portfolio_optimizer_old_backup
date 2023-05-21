@@ -2,7 +2,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 
-
 def main():
     df = px.data.stocks()
     print(df.columns)
@@ -36,17 +35,19 @@ def main():
                                  )
                       )
 
-
     fig.show()
     print(weight(df['AAPL']))
+
 
 def multiply(columns, coeff):
     return None
 
-def weight(series):
-    growth = series[-1]-series[0]
 
-    #volatility =
+def weight(series):
+    growth = series[-1] - series[0]
+
+    # volatility =
+
 
 if __name__ == "__main__":
     main()

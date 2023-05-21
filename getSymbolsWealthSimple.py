@@ -10,7 +10,8 @@ import pandas as pd
 #    data = json.loads(u.read().decode())
 #    pprint.pprint(data)
 
-data = pd.read_csv("WS-Trade-Info-main/etf_info/CA_ETF_WS.csv")
+data = pd.read_csv("WS-Trade-Info-main/stock_info/CA_Stocks_WS.csv")
+# data = pd.read_csv("WS-Trade-Info-main/etf_info/CA_ETF_WS.csv")
 
 print(data['symbol'].head())
 

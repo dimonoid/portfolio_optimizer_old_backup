@@ -6,8 +6,13 @@ import numpy as np
 from yahoofinancials import YahooFinancials
 from icecream import *
 
-tickerList = 'INC-UN.TO'
-#tickerList = 'Wealthsimple'
+tickerList = 'CA_Stocks'
+# tickerList = 'EmergingMarkets'
+# tickerList = 'europe50'
+# tickerList = 'tsx60'
+# tickerList = 'QQQ'
+# tickerList = 'USLargeCap'
+# tickerList = 'Wealthsimple'
 # tickerList = 'Wealthsimple'
 tickerListTime = tickerList + '_10Years'
 
@@ -62,7 +67,7 @@ def main():
                 continue
             # TODO DEBUG
 
-            #stock_symbol = 'DGRC.TO'  # temp !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            # stock_symbol = 'DGRC.TO'  # temp !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             # if stock_symbol == 'CYBR-B.TO':
             #    print('Debug')
             # set date range for historical prices
@@ -136,7 +141,7 @@ def main():
 
             if len(prices) < 400:
                 print("Too small number of rows")
-                continue
+                # continue
 
             if np.isnan(prices.loc[prices['formatted_date'] == '2021-07-02'].iloc[0][
                             'close']):  # available for purchase TODO select last trading day
@@ -148,7 +153,7 @@ def main():
                 # continue
 
             if stock_symbol in {'FQC.TO', 'HQU.TO', 'HSU.TO', 'HFU.TO', 'HGU.TO', 'HMJU.TO', 'HXD.TO', 'HND.TO',
-                                'FSF.TO', 'DXP.TO', 'DGRC.TO', 'HMJI.TO'}:
+                                'FSF.TO', 'DXP.TO', 'DGRC.TO', 'HMJI.TO', 'HSD.TO', 'HUV.TO', 'HIU.TO'}:
                 # black list of errors, leveraged, or inverse etfs since it is cheating
                 continue
 

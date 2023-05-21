@@ -4,6 +4,7 @@ import pandas
 # import plotly
 import plotly.graph_objects as go
 
+
 # see https://plotly.com/python/time-series/
 
 def main():
@@ -77,7 +78,7 @@ def main():
                           ]
                     )
 
-    #fig = go.Figure(data=[go.Scatter(x=snp['Date'],
+    # fig = go.Figure(data=[go.Scatter(x=snp['Date'],
     #                                     open=(snp['Open'] - snpMin) / (snpMax - snpMin),
     #                                     high=(snp['High'] - snpMin) / (snpMax - snpMin),
     #                                     low=(snp['Low'] - snpMin) / (snpMax - snpMin),

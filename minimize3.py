@@ -13,12 +13,17 @@ import weightFunction
 
 # dataRaw = pd.read_csv('mergedWealthsimple_1Year.csv')
 # dataRaw = pd.read_csv('mergedWealthsimple_3Years.csv')
-dataRaw = pd.read_csv('mergedINC-UN.TO_10Years.csv')
-#dataRaw = pd.read_csv('mergedWealthsimple_10Years.csv')
+# dataRaw = pd.read_csv('mergedUSLargeCap_10Years.csv')
+# dataRaw = pd.read_csv('mergedQQQ_10Years.csv')
+# dataRaw = pd.read_csv('mergedtsx60_10Years.csv')
+# dataRaw = pd.read_csv('mergedeurope50_10Years.csv')
+# dataRaw = pd.read_csv('mergedEmergingMarkets_10Years.csv')
+dataRaw = pd.read_csv('mergedCA_Stocks_10Years.csv')
+# dataRaw = pd.read_csv('mergedWealthsimple_10Years.csv')
 # dataRaw = pd.read_csv('mergedTest2_10YearsLite.csv')
 
-pd.set_option('max_columns', None)
-pd.set_option('max_rows', None)
+# pd.set_option('max_columns', None)
+# pd.set_option('max_rows', None)
 pd.set_option('display.width', None)
 pd.set_option('display.float_format', lambda x: '%.3f' % x)
 
@@ -188,8 +193,8 @@ def visualize(modifiedCoeff, portfolioSeries, portfolioPunishedSeries, portfolio
         )
         axes[0, 0].title.set_text('derivatives')
 
-        axes[0, 1].plot(np.linspace(0, 1, len(portfolioSeries)), portfolioSeries)
-        axes[0, 1].plot(np.linspace(0, 1, len(portfolioPunishedSeries)), portfolioPunishedSeries)
+        axes[0, 1].plot(np.linspace(0, 1, len(portfolioSeries)), portfolioSeries, color='g', )
+        axes[0, 1].plot(np.linspace(0, 1, len(portfolioPunishedSeries)), portfolioPunishedSeries, color='orange')
         axes[0, 1].plot(np.linspace(0, 1, len(HXS)), HXS, color='k')
         axes[0, 1].plot(np.linspace(0, 1, len(ZQQ)), ZQQ, color='r')
 
@@ -260,7 +265,8 @@ def table(modifiedCoeff):
     recommendation = pd.DataFrame(
         {'Ticker': tickers.to_list(),
          'Recommendation%': (modifiedCoeff.iloc[-1] * 100).tolist(),
-         # 'Annualized performance%': ((data.iloc[-1][:-1].divide(data.iloc[0][:-1]) - 1) * 100).values.tolist(),
+         # 'Last year performance%': ((data.iloc[-1][:-1].divide(data.iloc[-250][:-1]) - 1) * 100).values.tolist(),
+         'Last year performance%': (np.exp((data.iloc[-12][:-1] - (data.iloc[-250][:-1])).values.tolist()) - 1) * 100,
          # 'Price now': (dataRaw.iloc[-1][1:]).to_list(),
          # 'Number of shares to buy': [round(i) for i in (params * moneyToInvest / data.iloc[-1][:-1]).to_list()]
          }
@@ -323,6 +329,7 @@ def f(params):
 
         if len(portfolioDiff) * fakePast <= i < len(portfolioDiff) * fakePresent:  # for back testing performance
             try:
+                # integralPunished += d
                 integralPunished += weightFunction.weight(d, riskTolerance)  # / sum(params)
                 portfolioPunished.append(integralPunished)
 
@@ -332,6 +339,7 @@ def f(params):
                 print("Overflow!!!")
         else:
             portfolioPunished.append(integralPunished)  # same value from last loop
+            # integral += d
 
         integral += d
         portfolio.append(integral)
@@ -389,8 +397,9 @@ def f(params):
     # print("weight=" + str(weight))
 
     visualize(modifiedCoeff, portfolioSeries, portfolioPunishedSeries, portfolioDiff, weight,
-              data['HXS.TO'],
-              data['ZQQ.TO'])
+              data['SHOP.TO'],
+              # data['ZQQ.TO'])
+              data['SHOP.TO'])
 
     return weight
 
@@ -592,7 +601,9 @@ def main(riskToleranceP, fakePastP, fakePresentP, fakeFutureP, initial_guess=np.
 
 
 if __name__ == "__main__":
-    main(riskToleranceP=4.5, fakePastP=0.05, fakePresentP=0.98, fakeFutureP=0.99)
+    main(riskToleranceP=4.5, fakePastP=0.7, fakePresentP=0.99, fakeFutureP=0.991)
+
+# Start of Covid -> 0.855
 
 # override = True
 # f(np.array([5.96086099e-05, 5.96086099e-05, 5.96086099e-05, 5.96086099e-05,

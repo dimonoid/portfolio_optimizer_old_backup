@@ -36,8 +36,8 @@ print()
 
 # calculate daily logarithmic return
 prices['returnsLog'] = (np.log(prices.close / prices.close.shift(-1)
-                           )
-                    )
+                               )
+                        )
 
 prices['returns'] = (prices.close - prices.close.shift(-1)
                      )
@@ -71,7 +71,7 @@ for i in prices.returns.values:
     print(type(i))
     if np.isnan(i):
         continue
-    #sum+=i
+    # sum+=i
     sum += weightFunction.weight(i, 6)
 
 print("Weight: " + str(sum))
